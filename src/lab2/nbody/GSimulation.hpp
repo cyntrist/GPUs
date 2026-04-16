@@ -40,7 +40,7 @@ public:
   void init();
   void set_number_of_particles(int N);
   void set_number_of_steps(int N);
-  void start();
+  void start(bool gpu);
   
 private:
   ParticleAoS *particles;
@@ -62,7 +62,9 @@ private:
   void init_mass();
 
   void get_acceleration(int n);
+  void get_acceleration_kernel(int n);
   real_type updateParticles(int n, real_type dt);
+  real_type updateParticlesKernel(int n, real_type dt);
     
   inline void set_npart(const int &N){ _npart = N; }
   inline int get_npart() const {return _npart; }
