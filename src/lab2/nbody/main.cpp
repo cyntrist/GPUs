@@ -28,19 +28,24 @@ int main(int argc, char** argv)
   int nstep; 		//number ot integration steps
   
   GSimulation sim;
-    
+  bool gpu = false;  
+
   if(argc>1)
   {
     N=atoi(argv[1]);
     sim.set_number_of_particles(N);  
-    if(argc==3) 
+    if(argc== 3 || argc == 4) 
     {
       nstep=atoi(argv[2]);
       sim.set_number_of_steps(nstep);  
     }
+    if(argc == 4 && argv[3][0] == 'g') 
+    {
+      gpu = true; 
+    }
   }
   
-  sim.start();
+  sim.start(gpu);
 
   return 0;
 }
