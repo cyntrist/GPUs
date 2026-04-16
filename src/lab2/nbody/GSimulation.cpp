@@ -20,6 +20,8 @@
 
 #include "GSimulation.hpp"
 #include "cpu_time.hpp"
+#include <sycl/sycl.hpp>
+using namespace sycl;
 
 GSimulation :: GSimulation()
 {
@@ -235,7 +237,6 @@ void GSimulation :: start(bool gpu)
   
   _totTime = 0.; 
   
-  
   CPUTime time;
   double ts0 = 0;
   double ts1 = 0;
@@ -243,6 +244,12 @@ void GSimulation :: start(bool gpu)
   double gflops = 1e-9 * ( (11. + 18. ) * nd*nd  +  nd * 19. );
   double av=0.0, dev=0.0;
   int nf = 0;
+
+  if (gpu) {
+    _D = sycl::device(sycl::gpu_selector());
+    _Q(_D);
+    printf(">> Device: ", Q.get_device().get_info<sycl::info::device::name>());
+  }
   
   const double t0 = time.start();
   for (int s=1; s<=get_nsteps(); ++s)
