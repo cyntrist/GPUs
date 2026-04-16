@@ -55,6 +55,9 @@ private:
   
   double _totTime;		//total time of the simulation
   double _totFlops;		//total number of flops 
+
+  sycl::queue _Q;
+  sycl::device _D;
    
   void init_pos();	
   void init_vel();
