@@ -201,29 +201,59 @@ void GSimulation ::get_acceleration_kernel(int n)
 
   for (i = 0; i < n; i++) // update acceleration
   {
-    real_type ax_i = particlesAoS[i].acc[0];
-    real_type ay_i = particlesAoS[i].acc[1];
-    real_type az_i = particlesAoS[i].acc[2];
+    if (_soa)
+    {
+      real_type ax_i = particlesSoA->acc_x[i];
+      real_type ay_i = particlesSoA->acc_y[i];
+      real_type az_i = particlesSoA->acc_z[i];
+    }
+    else
+    {
+      real_type ax_i = particlesAoS[i].acc[0];
+      real_type ay_i = particlesAoS[i].acc[1];
+      real_type az_i = particlesAoS[i].acc[2];
+    }
     for (j = 0; j < n; j++)
     {
       real_type dx, dy, dz;
       real_type distanceSqr = 0.0f;
       real_type distanceInv = 0.0f;
 
-      dx = particlesAoS[j].pos[0] - particlesAoS[i].pos[0]; // 1flop
-      dy = particlesAoS[j].pos[1] - particlesAoS[i].pos[1]; // 1flop
-      dz = particlesAoS[j].pos[2] - particlesAoS[i].pos[2]; // 1flop
+      if (_soa)
+      {
+        dx = particlesSoA->pos_x[j] - particlesSoA->pos_x[i]; // 1flop
+        dy = particlesSoA->pos_y[j] - particlesSoA->pos_y[i]; // 1flop
+        dz = particlesSoA->pos_z[j] - particlesSoA->pos_z[i]; // 1flop
+      }
+      else
+      {
+        dx = particlesAoS[j].pos[0] - particlesAoS[i].pos[0]; // 1flop
+        dy = particlesAoS[j].pos[1] - particlesAoS[i].pos[1]; // 1flop
+        dz = particlesAoS[j].pos[2] - particlesAoS[i].pos[2]; // 1flop
+      }
 
       distanceSqr = dx * dx + dy * dy + dz * dz + softeningSquared; // 6flops
       distanceInv = 1.0f / sqrtf(distanceSqr);                      // 1div+1sqrt
 
-      ax_i += dx * G * particlesAoS[j].mass * distanceInv * distanceInv * distanceInv; // 6flops
-      ay_i += dy * G * particlesAoS[j].mass * distanceInv * distanceInv * distanceInv; // 6flops
-      az_i += dz * G * particlesAoS[j].mass * distanceInv * distanceInv * distanceInv; // 6flops
+      if (_soa)
+      {
+        ax_i += dx * G * particlesSoA->mass[j] * distanceInv * distanceInv * distanceInv; // 6flops
+        ay_i += dy * G * particlesSoA->mass[j] * distanceInv * distanceInv * distanceInv; // 6flops
+        az_i += dz * G * particlesSoA->mass[j] * distanceInv * distanceInv * distanceInv; // 6flops
+        particlesSoA->acc_x[i] = ax_i;
+        particlesSoA->acc_y[i] = ay_i;
+        particlesSoA->acc_z[i] = az_i;
+      }
+      else
+      {
+        ax_i += dx * G * particlesAoS[j].mass * distanceInv * distanceInv * distanceInv; // 6flops
+        ay_i += dy * G * particlesAoS[j].mass * distanceInv * distanceInv * distanceInv; // 6flops
+        az_i += dz * G * particlesAoS[j].mass * distanceInv * distanceInv * distanceInv; // 6flops
+        particlesAoS[i].acc[0] = ax_i;
+        particlesAoS[i].acc[1] = ay_i;
+        particlesAoS[i].acc[2] = az_i;
+      }
     }
-    particlesAoS[i].acc[0] = ax_i;
-    particlesAoS[i].acc[1] = ay_i;
-    particlesAoS[i].acc[2] = az_i;
   }
 }
 
@@ -279,21 +309,40 @@ real_type GSimulation ::updateParticlesKernel(int n, real_type dt)
 
   for (i = 0; i < n; ++i) // update position
   {
-    particlesAoS[i].vel[0] += particlesAoS[i].acc[0] * dt; // 2flops
-    particlesAoS[i].vel[1] += particlesAoS[i].acc[1] * dt; // 2flops
-    particlesAoS[i].vel[2] += particlesAoS[i].acc[2] * dt; // 2flops
+    if (_soa)
+    {
+      particlesSoA->vel_x[i] += particlesSoA->acc_x[i] * dt; // 2flops
+      particlesSoA->vel_y[i] += particlesSoA->acc_y[i] * dt; // 2flops
+      particlesSoA->vel_z[i] += particlesSoA->acc_z[i] * dt; // 2flops
 
-    particlesAoS[i].pos[0] += particlesAoS[i].vel[0] * dt; // 2flops
-    particlesAoS[i].pos[1] += particlesAoS[i].vel[1] * dt; // 2flops
-    particlesAoS[i].pos[2] += particlesAoS[i].vel[2] * dt; // 2flops
+      particlesSoA->pos_x[i] += particlesSoA->vel_x[i] * dt; // 2flops
+      particlesSoA->pos_y[i] += particlesSoA->vel_y[i] * dt; // 2flops
+      particlesSoA->pos_z[i] += particlesSoA->vel_z[i] * dt; // 2flops
 
-    particlesAoS[i].acc[0] = 0.;
-    particlesAoS[i].acc[1] = 0.;
-    particlesAoS[i].acc[2] = 0.;
+      particlesSoA->acc_x[i] = 0.;
+      particlesSoA->acc_y[i] = 0.;
+      particlesSoA->acc_z[i] = 0.;
+      energy += particlesSoA->mass[i] * (particlesSoA->vel_x[i] * particlesSoA->vel_x[i] +
+                                         particlesSoA->vel_y[i] * particlesSoA->vel_y[i] +
+                                         particlesSoA->vel_z[i] * particlesSoA->vel_z[i]); // 7flops
+    }
+    else
+    {
+      particlesAoS[i].vel[0] += particlesAoS[i].acc[0] * dt; // 2flops
+      particlesAoS[i].vel[1] += particlesAoS[i].acc[1] * dt; // 2flops
+      particlesAoS[i].vel[2] += particlesAoS[i].acc[2] * dt; // 2flops
 
-    energy += particlesAoS[i].mass * (particlesAoS[i].vel[0] * particlesAoS[i].vel[0] +
-                                      particlesAoS[i].vel[1] * particlesAoS[i].vel[1] +
-                                      particlesAoS[i].vel[2] * particlesAoS[i].vel[2]); // 7flops
+      particlesAoS[i].pos[0] += particlesAoS[i].vel[0] * dt; // 2flops
+      particlesAoS[i].pos[1] += particlesAoS[i].vel[1] * dt; // 2flops
+      particlesAoS[i].pos[2] += particlesAoS[i].vel[2] * dt; // 2flops
+
+      particlesAoS[i].acc[0] = 0.;
+      particlesAoS[i].acc[1] = 0.;
+      particlesAoS[i].acc[2] = 0.;
+      energy += particlesAoS[i].mass * (particlesAoS[i].vel[0] * particlesAoS[i].vel[0] +
+                                        particlesAoS[i].vel[1] * particlesAoS[i].vel[1] +
+                                        particlesAoS[i].vel[2] * particlesAoS[i].vel[2]); // 7flops
+    }
   }
   return energy;
 }
