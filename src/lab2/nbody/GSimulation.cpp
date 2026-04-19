@@ -362,10 +362,12 @@ void GSimulation ::start(bool gpu)
   real_type energy;
   real_type dt = get_tstep();
   int n = get_npart();
+  std::cout << "1" << std::endl;
 
   _gpu = gpu;
   sycl::device _sD;
   sycl::queue _sQ;
+  std::cout << "1" << std::endl;
   if (_gpu)
   {
     _sD = sycl::device(sycl::gpu_selector_v);
@@ -374,18 +376,21 @@ void GSimulation ::start(bool gpu)
   {
     _sD = sycl::device(sycl::cpu_selector_v);
   }
+  std::cout << "1" << std::endl;
   // printf(">> Device: ", _sD.get_info<sycl::info::device::name>());
   _sQ = sycl::queue(_sD);
 
   // allocate particles
 #ifdef SOA
   particles = sycl::malloc_shared<ParticleSoA>(n, _sQ);
+  std::cout << "2" << std::endl;
   particles->init(n, _sQ); 
 #else
   particles = sycl::malloc_shared<ParticleAoS>(n, _sQ);
   for (int i = 0; i < n; ++i)
     particles[i].init();
 #endif
+  std::cout << "2" << std::endl;
   init_pos();
   init_vel();
   init_acc();
