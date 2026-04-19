@@ -201,12 +201,12 @@ void GSimulation ::get_acceleration(int n)
   }
 }
 
-void GSimulation ::get_acceleration_kernel(int n)
+void GSimulation ::get_acceleration_kernel(sycl::queue Q, int n)
 {
   const float softeningSquared = 1e-3f;
   const float G = 6.67259e-11f;
 
-  _sQ.submit([&](handler &cgh)
+  Q.submit([&](handler &cgh)
              {
 #ifdef SOA
         ParticleSoA* p = particles;
@@ -297,12 +297,12 @@ real_type GSimulation ::updateParticles(int n, real_type dt)
   return energy;
 }
 
-real_type GSimulation ::updateParticlesKernel(int n, real_type dt)
+real_type GSimulation ::updateParticlesKernel(sycl::queue Q, int n, real_type dt)
 {
   real_type energy = 0;
   sycl::buffer<real_type> energyBuffer(&energy, 1);
 
-  _sQ.submit([&](handler &cgh)
+  Q.submit([&](handler &cgh)
              {
 #ifdef SOA
     ParticleSoA* p = particles;
@@ -482,7 +482,7 @@ GSimulation::~GSimulation()
 #ifdef SOA
     particles->~ParticleSoA();
 #endif
-    sycl::free(particles, _sQ);
+    // sycl::free(particles, _sQ);
     particles = nullptr;
   }
 }
