@@ -22,7 +22,7 @@
 #include "cpu_time.hpp"
 using namespace sycl;
 
-GSimulation ::GSimulation()
+GSimulation ::GSimulation() : particles(nullptr)
 {
   std::cout << "===============================" << std::endl;
   std::cout << " Initialize Gravity Simulation" << std::endl;
@@ -364,7 +364,8 @@ void GSimulation ::start(bool gpu)
   int n = get_npart();
 
   _gpu = gpu;
-
+  sycl::device _sD;
+  sycl::queue _sQ;
   if (_gpu)
   {
     _sD = sycl::device(sycl::gpu_selector_v);
@@ -409,8 +410,8 @@ void GSimulation ::start(bool gpu)
 
     if (_gpu)
     {
-      get_acceleration_kernel(n);
-      energy = updateParticlesKernel(n, dt);
+      get_acceleration_kernel(_sQ, n);
+      energy = updateParticlesKernel(_sQ, n, dt);
     }
     else
     {

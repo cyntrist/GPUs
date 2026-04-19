@@ -63,8 +63,6 @@ private:
   double _totTime;  // total time of the simulation
   double _totFlops; // total number of flops
 
-  sycl::queue _sQ;
-  sycl::device _sD;
   bool _gpu = false;
 
   void init_pos();
@@ -73,9 +71,9 @@ private:
   void init_mass();
 
   void get_acceleration(int n);
-  void get_acceleration_kernel(int n);
+  void get_acceleration_kernel(sycl::queue Q, int n);
   real_type updateParticles(int n, real_type dt);
-  real_type updateParticlesKernel(int n, real_type dt);
+  real_type updateParticlesKernel(sycl::queue Q, int n, real_type dt);
 
   inline void set_npart(const int &N) { _npart = N; }
   inline int get_npart() const { return _npart; }
