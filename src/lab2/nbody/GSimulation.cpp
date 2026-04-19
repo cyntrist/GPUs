@@ -366,21 +366,16 @@ void GSimulation ::start(bool gpu)
 
   _gpu = gpu;
   std::cout << "antes device" << std::endl;
-  sycl::device _sD;
+  sycl::device _sD = sycl::device(sycl::cpu_selector_v);;
   std::cout << "antes q" << std::endl;
-  sycl::queue _sQ;
   std::cout << "1" << std::endl;
   if (_gpu)
   {
     _sD = sycl::device(sycl::gpu_selector_v);
   }
-  else
-  {
-    _sD = sycl::device(sycl::cpu_selector_v);
-  }
   std::cout << "1" << std::endl;
   // printf(">> Device: ", _sD.get_info<sycl::info::device::name>());
-  _sQ = sycl::queue(_sD);
+  sycl::queue _sQ = sycl::queue(_sD);
 
   // allocate particles
 #ifdef SOA
