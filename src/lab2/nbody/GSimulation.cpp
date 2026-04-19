@@ -378,7 +378,7 @@ void GSimulation ::start(bool gpu)
 
   // allocate particles
 #ifdef SOA
-  particles = sycl::malloc_shared<ParticleSoA>(n, _sQ);
+  particles = sycl::malloc_shared<ParticleSoA>(1, _sQ);
   particles->init(n, _sQ); 
 #else
   particles = sycl::malloc_shared<ParticleAoS>(n, _sQ);
