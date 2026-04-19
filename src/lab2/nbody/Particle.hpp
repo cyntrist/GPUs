@@ -49,9 +49,9 @@ struct ParticleSoA
 
     }
     ~ParticleSoA() {
-      sycl::free(pos_x, _Q); pos_x = nullptr; free(pos_y, _Q); pos_y = nullptr; free(pos_z, _Q); pos_z = nullptr;
-      sycl::free(vel_x, _Q); vel_x = nullptr; free(vel_y, _Q); vel_y = nullptr; free(vel_z, _Q); vel_z = nullptr;
-      sycl::free(acc_x, _Q); acc_x = nullptr; free(acc_y, _Q); acc_y = nullptr; free(acc_z, _Q); acc_z = nullptr;
+      sycl::free(pos_x, _Q); pos_x = nullptr; sycl::free(pos_y, _Q); pos_y = nullptr; sycl::free(pos_z, _Q); pos_z = nullptr;
+      sycl::free(vel_x, _Q); vel_x = nullptr; sycl::free(vel_y, _Q); vel_y = nullptr; sycl::free(vel_z, _Q); vel_z = nullptr;
+      sycl::free(acc_x, _Q); acc_x = nullptr; sycl::free(acc_y, _Q); acc_y = nullptr; sycl::free(acc_z, _Q); acc_z = nullptr;
       sycl::free(mass, _Q); mass = nullptr;
     }
     void init(int n, sycl::queue Q) 

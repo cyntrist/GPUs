@@ -26,9 +26,10 @@ int main(int argc, char** argv)
 {
   int N;			//number of particles
   int nstep; 		//number ot integration steps
-  
+  std::cout << "1" << std::endl;
   GSimulation sim;
   bool gpu = false;  
+  std::cout << "1" << std::endl;
 
   if(argc>1)
   {
@@ -44,6 +45,7 @@ int main(int argc, char** argv)
       gpu = true; 
     }
   }
+  std::cout << "1" << std::endl;
   
   sim.start(gpu);
 

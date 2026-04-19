@@ -30,7 +30,6 @@
 #include <stdlib.h>
 
 #include "Particle.hpp"
-#include <sycl/sycl.hpp>
 
 #define SOA 1
 
