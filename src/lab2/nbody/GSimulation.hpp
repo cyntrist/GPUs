@@ -29,6 +29,7 @@
 #include <sstream>
 #include <stdlib.h>
 #include <new>
+#include <optional>
 
 #include "Particle.hpp"
 #include <sycl/sycl.hpp>
@@ -64,8 +65,8 @@ private:
   double _totTime;  // total time of the simulation
   double _totFlops; // total number of flops
 
-  sycl::queue _sQ;
-  sycl::device _sD;
+  std::optional<sycl::queue> _sQ;
+  std::optional<sycl::device> _sD;
   bool _gpu = false;
 
   void init_pos();

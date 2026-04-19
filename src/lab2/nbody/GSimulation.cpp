@@ -31,8 +31,6 @@ GSimulation ::GSimulation()
       _kenergy(0.0f),
       _totTime(0.0),
       _totFlops(0.0),
-      _sQ(),
-      _sD(),
       _gpu(false)
 {
   std::cout << "===============================" << std::endl;
@@ -213,7 +211,7 @@ void GSimulation ::get_acceleration_kernel(int n)
   const float softeningSquared = 1e-3f;
   const float G = 6.67259e-11f;
 
-  _sQ.submit([&](handler &cgh)
+  _sQ->submit([&](handler &cgh)
              {
 #ifdef SOA
         ParticleSoA* p = particles;
@@ -309,7 +307,7 @@ real_type GSimulation ::updateParticlesKernel(int n, real_type dt)
   real_type energy = 0;
   sycl::buffer<real_type> energyBuffer(&energy, 1);
 
-  _sQ.submit([&](handler &cgh)
+  _sQ->submit([&](handler &cgh)
              {
 #ifdef SOA
     ParticleSoA* p = particles;
@@ -374,26 +372,26 @@ void GSimulation ::start(bool gpu)
 
   if (_gpu)
   {
-    _sD = sycl::device(sycl::gpu_selector_v);
+    _sD.emplace(sycl::gpu_selector_v);
   }
   else
   {
-    _sD = sycl::device(sycl::cpu_selector_v);
+    _sD.emplace(sycl::cpu_selector_v);
   }
   // printf(">> Device: ", _sD.get_info<sycl::info::device::name>());
-  _sQ = sycl::queue(_sD);
+  _sQ.emplace(*_sD);
 
   // allocate particles
 #ifdef SOA
-  particles = sycl::malloc_shared<ParticleSoA>(1, _sQ);
+  particles = sycl::malloc_shared<ParticleSoA>(1, *_sQ);
   if (!particles)
   {
     throw std::bad_alloc();
   }
   new (particles) ParticleSoA();
-  particles->init(n, _sQ);
+  particles->init(n, *_sQ);
 #else
-  particles = sycl::malloc_shared<ParticleAoS>(n, _sQ);
+  particles = sycl::malloc_shared<ParticleAoS>(n, *_sQ);
   if (!particles)
   {
     throw std::bad_alloc();
@@ -499,7 +497,10 @@ GSimulation::~GSimulation()
 #ifdef SOA
     particles->~ParticleSoA();
 #endif
-    sycl::free(particles, _sQ);
+    if (_sQ.has_value())
+    {
+      sycl::free(particles, *_sQ);
+    }
     particles = nullptr;
   }
 }
