@@ -251,7 +251,7 @@ void GSimulation ::get_acceleration_kernel(int n)
             p[i].acc[1] = ay_i;
             p[i].acc[2] = az_i;
 #endif
-    }) })
+    }); })
       .wait();
 }
 

@@ -22,7 +22,7 @@
 #define _PARTICLE_HPP
 #include <cmath>
 #include "types.hpp"
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 using namespace cl::sycl;
 
 struct ParticleAoS
