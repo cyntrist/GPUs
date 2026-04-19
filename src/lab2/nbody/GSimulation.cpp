@@ -23,13 +23,20 @@
 using namespace sycl;
 
 GSimulation ::GSimulation()
+    : particles(nullptr),
+      _npart(16000),
+      _nsteps(10),
+      _tstep(0.1f),
+      _sfreq(1),
+      _kenergy(0.0f),
+      _totTime(0.0),
+      _totFlops(0.0),
+      _sQ(),
+      _sD(),
+      _gpu(false)
 {
   std::cout << "===============================" << std::endl;
   std::cout << " Initialize Gravity Simulation" << std::endl;
-  set_npart(16000);
-  set_nsteps(10);
-  set_tstep(0.1);
-  set_sfreq(1);
 }
 
 void GSimulation ::set_number_of_particles(int N)
@@ -378,12 +385,23 @@ void GSimulation ::start(bool gpu)
 
   // allocate particles
 #ifdef SOA
-  particles = sycl::malloc_shared<ParticleSoA>(n, _sQ);
-  particles->init(n, _sQ); 
+  particles = sycl::malloc_shared<ParticleSoA>(1, _sQ);
+  if (!particles)
+  {
+    throw std::bad_alloc();
+  }
+  new (particles) ParticleSoA();
+  particles->init(n, _sQ);
 #else
   particles = sycl::malloc_shared<ParticleAoS>(n, _sQ);
+  if (!particles)
+  {
+    throw std::bad_alloc();
+  }
   for (int i = 0; i < n; ++i)
-    particles[i].init();
+  {
+    new (&particles[i]) ParticleAoS();
+  }
 #endif
   init_pos();
   init_vel();

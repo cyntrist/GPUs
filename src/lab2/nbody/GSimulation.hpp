@@ -28,6 +28,7 @@
 #include <string>
 #include <sstream>
 #include <stdlib.h>
+#include <new>
 
 #include "Particle.hpp"
 #include <sycl/sycl.hpp>
