@@ -365,7 +365,9 @@ void GSimulation ::start(bool gpu)
   std::cout << "1" << std::endl;
 
   _gpu = gpu;
+  std::cout << "antes device" << std::endl;
   sycl::device _sD;
+  std::cout << "antes q" << std::endl;
   sycl::queue _sQ;
   std::cout << "1" << std::endl;
   if (_gpu)
