@@ -23,7 +23,7 @@
 #include <cmath>
 #include "types.hpp"
 #include <sycl/sycl.hpp>
-using namespace cl::sycl;
+using namespace sycl;
 
 struct ParticleAoS
 {
