@@ -1,7 +1,7 @@
 /*
     This file is part of the example codes which have been used
     for the "Code Optmization Workshop".
-    
+
     Copyright (C) 2016  Fabio Baruffa <fbaru-dev@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
@@ -30,36 +30,44 @@
 #include <stdlib.h>
 
 #include "Particle.hpp"
+#include <sycl/sycl.hpp>
 
-class GSimulation 
+#define SOA 1
+
+class GSimulation
 {
 public:
   GSimulation();
   ~GSimulation();
-  
+
   void init();
   void set_number_of_particles(int N);
   void set_number_of_steps(int N);
-  void start(bool gpu);
-  
+  void start(bool gpu = false);
+
 private:
+#ifdef SOA
+  ParticleSoA *particles;
+#else
   ParticleAoS *particles;
-  
-  int       _npart;		//number of particles
-  int	    _nsteps;		//number of integration steps
-  real_type _tstep;		//time step of the simulation
+#endif
 
-  int	    _sfreq;		//sample frequency
-  
-  real_type _kenergy;		//kinetic energy
-  
-  double _totTime;		//total time of the simulation
-  double _totFlops;		//total number of flops 
+  int _npart;       // number of particles
+  int _nsteps;      // number of integration steps
+  real_type _tstep; // time step of the simulation
 
-  sycl::queue _Q;
-  sycl::device _D;
-   
-  void init_pos();	
+  int _sfreq; // sample frequency
+
+  real_type _kenergy; // kinetic energy
+
+  double _totTime;  // total time of the simulation
+  double _totFlops; // total number of flops
+
+  sycl::queue _sQ;
+  sycl::device _sD;
+  bool _gpu = false;
+
+  void init_pos();
   void init_vel();
   void init_acc();
   void init_mass();
@@ -68,21 +76,20 @@ private:
   void get_acceleration_kernel(int n);
   real_type updateParticles(int n, real_type dt);
   real_type updateParticlesKernel(int n, real_type dt);
-    
-  inline void set_npart(const int &N){ _npart = N; }
-  inline int get_npart() const {return _npart; }
-  
-  inline void set_tstep(const real_type &dt){ _tstep = dt; }
-  inline real_type get_tstep() const {return _tstep; }
-  
-  inline void set_nsteps(const int &n){ _nsteps = n; }
-  inline int get_nsteps() const {return _nsteps; }
-  
-  inline void set_sfreq(const int &sf){ _sfreq = sf; }
-  inline int get_sfreq() const {return _sfreq; }
-  
+
+  inline void set_npart(const int &N) { _npart = N; }
+  inline int get_npart() const { return _npart; }
+
+  inline void set_tstep(const real_type &dt) { _tstep = dt; }
+  inline real_type get_tstep() const { return _tstep; }
+
+  inline void set_nsteps(const int &n) { _nsteps = n; }
+  inline int get_nsteps() const { return _nsteps; }
+
+  inline void set_sfreq(const int &sf) { _sfreq = sf; }
+  inline int get_sfreq() const { return _sfreq; }
+
   void print_header();
-  
 };
 
 #endif

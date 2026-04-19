@@ -230,6 +230,9 @@ void GSimulation::get_acceleration_SYCL(int n) {
 #endif
         });
     }).wait();
+
+
+    
 }
 
 
