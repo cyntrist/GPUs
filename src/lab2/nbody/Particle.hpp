@@ -21,7 +21,6 @@
 #ifndef _PARTICLE_HPP
 #define _PARTICLE_HPP
 #include <cmath>
-#include <new>
 #include "types.hpp"
 #include <sycl/sycl.hpp>
 using namespace sycl;
@@ -46,37 +45,27 @@ struct ParticleAoS
 struct ParticleSoA
 {
   public:
-    ParticleSoA()
-      : pos_x(nullptr), pos_y(nullptr), pos_z(nullptr),
-        vel_x(nullptr), vel_y(nullptr), vel_z(nullptr),
-        acc_x(nullptr), acc_y(nullptr), acc_z(nullptr),
-        mass(nullptr), _Q()
-    {}
+    ParticleSoA() { 
+
+    }
     ~ParticleSoA() {
-      if (pos_x) { sycl::free(pos_x, _Q); pos_x = nullptr; }
-      if (pos_y) { sycl::free(pos_y, _Q); pos_y = nullptr; }
-      if (pos_z) { sycl::free(pos_z, _Q); pos_z = nullptr; }
-      if (vel_x) { sycl::free(vel_x, _Q); vel_x = nullptr; }
-      if (vel_y) { sycl::free(vel_y, _Q); vel_y = nullptr; }
-      if (vel_z) { sycl::free(vel_z, _Q); vel_z = nullptr; }
-      if (acc_x) { sycl::free(acc_x, _Q); acc_x = nullptr; }
-      if (acc_y) { sycl::free(acc_y, _Q); acc_y = nullptr; }
-      if (acc_z) { sycl::free(acc_z, _Q); acc_z = nullptr; }
-      if (mass)  { sycl::free(mass, _Q);  mass = nullptr; }
+      sycl::free(pos_x, _Q); pos_x = nullptr; free(pos_y, _Q); pos_y = nullptr; free(pos_z, _Q); pos_z = nullptr;
+      sycl::free(vel_x, _Q); vel_x = nullptr; free(vel_y, _Q); vel_y = nullptr; free(vel_z, _Q); vel_z = nullptr;
+      sycl::free(acc_x, _Q); acc_x = nullptr; free(acc_y, _Q); acc_y = nullptr; free(acc_z, _Q); acc_z = nullptr;
+      sycl::free(mass, _Q); mass = nullptr;
     }
     void init(int n, sycl::queue Q) 
     {
-      _Q = Q;
       pos_x = malloc_shared<real_type>(n, Q); pos_y = malloc_shared<real_type>(n, Q); pos_z = malloc_shared<real_type>(n, Q);
       vel_x = malloc_shared<real_type>(n, Q); vel_y = malloc_shared<real_type>(n, Q); vel_z = malloc_shared<real_type>(n, Q);
       acc_x = malloc_shared<real_type>(n, Q); acc_y = malloc_shared<real_type>(n, Q); acc_z = malloc_shared<real_type>(n, Q);
       mass  = malloc_shared<real_type>(n, Q);
-      if (!pos_x || !pos_y || !pos_z || !vel_x || !vel_y || !vel_z ||
-          !acc_x || !acc_y || !acc_z || !mass)
-      {
-        this->~ParticleSoA();
-        throw std::bad_alloc();
-      }
+      _Q = Q;
+
+      // pos_x = NULL; pos_y = NULL; pos_z = NULL;
+      // vel_x = NULL; vel_y = NULL; vel_z = NULL;
+      // acc_x = NULL; acc_y = NULL; acc_z = NULL;
+      // mass  = NULL;
     }
     real_type *pos_x, *pos_y, *pos_z;
     real_type *vel_x, *vel_y, *vel_z;

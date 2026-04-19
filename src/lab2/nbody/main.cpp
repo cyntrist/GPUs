@@ -19,46 +19,33 @@
  */
 
 #include <iostream>
-#include <exception>
 
 #include "GSimulation.hpp"
 
 int main(int argc, char** argv) 
 {
-  try
-  {
-    int N = 0;			//number of particles
-    int nstep = 0; 		//number ot integration steps
-    
-    GSimulation sim;
-    bool gpu = false;  
+  int N;			//number of particles
+  int nstep; 		//number ot integration steps
+  
+  GSimulation sim;
+  bool gpu = false;  
 
-    if(argc>1)
+  if(argc>1)
+  {
+    N=atoi(argv[1]);
+    sim.set_number_of_particles(N);  
+    if(argc== 3 || argc == 4) 
     {
-      N=atoi(argv[1]);
-      sim.set_number_of_particles(N);  
-      if(argc== 3 || argc == 4) 
-      {
-        nstep=atoi(argv[2]);
-        sim.set_number_of_steps(nstep);  
-      }
-      if(argc == 4 && argv[3][0] == 'g') 
-      {
-        gpu = true; 
-      }
+      nstep=atoi(argv[2]);
+      sim.set_number_of_steps(nstep);  
     }
+    if(argc == 4 && argv[3][0] == 'g') 
+    {
+      gpu = true; 
+    }
+  }
+  
+  sim.start(gpu);
 
-    sim.start(gpu);
-    return 0;
-  }
-  catch (const sycl::exception& e)
-  {
-    std::cerr << "SYCL error: " << e.what() << std::endl;
-  }
-  catch (const std::exception& e)
-  {
-    std::cerr << "Error: " << e.what() << std::endl;
-  }
-
-  return 1;
+  return 0;
 }
