@@ -352,8 +352,9 @@ real_type GSimulation ::updateParticlesKernel(int n, real_type dt)
     }); })
       .wait();
 
-  auto hostAcc = energyBuffer.get_host_access<sycl::access::mode::read>();
-  return hostAcc[0];
+  auto hostAcc = energyBuffer.get_host_access(sycl::read_only);
+  energy = hostAcc[0];
+  return energy;
 }
 
 void GSimulation ::start(bool gpu)
