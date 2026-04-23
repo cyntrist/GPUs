@@ -1,0 +1,10 @@
+cuando hacemos un malloc nadie nos asegura que los datos viven en ram indefinidamente, el sistema operativo se los lleva cuando quiere
+
+malloc + mlock fija las paginas en memoria y hace uqe la transferencia sea más rápida
+
+nvidia proporciona una rutina 
+llamada cudamallochost
+pinned es utilizar cudamallochost
+la memoria que alocamos se asocia de manera fija (pinned) a la memoria física
+
+mayor rendimiento en la gráfica si usamos cudamallochost pero si te pasas jodes tu pc

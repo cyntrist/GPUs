@@ -1,0 +1,5 @@
+alto bw(gbytes/s, tiempo) ancho size D->D D-H H-D
+
+otra grafica:
+
+fllops/s / size
