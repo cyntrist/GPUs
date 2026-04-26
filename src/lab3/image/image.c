@@ -155,7 +155,7 @@ void border(float *im, float *image_out,
 {
 	t0 = get_time();
 
-	#pragma acc kernels loop independent collapse(2)
+	#pragma acc parallel loop collapse(2) present(im, image_out)
 	for(i=ws2; i<height-ws2; i++)
 	{
 		for(j=ws2; j<width-ws2; j++)
@@ -165,7 +165,6 @@ void border(float *im, float *image_out,
 			//hay clausula reduccion 
 			for (ii =-ws2; ii<=ws2; ii++)
 			{
-				#pragma acc loop seq
 				for (jj =-ws2; jj<=ws2; jj++)
 					 tmp += im[(i+ii)*width + (j+jj)]*filt[(ii+ws2)*window_size + jj+ws2];
 			}
