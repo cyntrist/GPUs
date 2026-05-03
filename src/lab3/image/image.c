@@ -151,16 +151,18 @@ void border(float *im, float *image_out,
 	filt[3] = -1.0; filt[4] =  4.0; filt[5] = -1.0;
 	filt[6] =  0.0; filt[7] = -1.0; filt[8] =  0.0;
 
-#pragma acc ...
+#pragma acc data copyin(im[0:width*height]) copyout(image_out[0:width*height])
 {
-
 	t0 = get_time();
 
+	#pragma acc parallel loop collapse(2) present(im, image_out)
 	for(i=ws2; i<height-ws2; i++)
 	{
 		for(j=ws2; j<width-ws2; j++)
 		{
 			tmp = 0.0;
+			#pragma acc loop seq
+			//hay clausula reduccion 
 			for (ii =-ws2; ii<=ws2; ii++)
 			{
 				for (jj =-ws2; jj<=ws2; jj++)
@@ -186,7 +188,9 @@ void freeMemory(unsigned char *imageUCHAR, float *imageBW, float *imageOUT)
 	//free(imageUCHAR);
 	free(imageBW);
 	free(imageOUT);
-
+#ifdef _OPENACC
+	acc_shutdown(acc_device_not_host);
+#endif
 }	
 
 
@@ -220,7 +224,12 @@ int main(int argc, char **argv) {
 	switch (argv[3][0]) {
 		case 'c':
 		case 'g':
+			printf("via GPU\n");
 			border(imageBW, imageOUT, height, width);
+#ifdef _OPENACC
+			printf("OpenACC init\n");
+			acc_init(acc_device_not_host);
+#endif
 			break;
 		default:
 			printf("Not Implemented yet!!\n");

@@ -22,6 +22,8 @@
 #define _PARTICLE_HPP
 #include <cmath>
 #include "types.hpp"
+#include <sycl/sycl.hpp>
+using namespace sycl;
 
 struct ParticleAoS
 {
@@ -43,18 +45,34 @@ struct ParticleAoS
 struct ParticleSoA
 {
   public:
-    ParticleSoA() { init();}
-    void init() 
+    ParticleSoA() { 
+
+    }
+    ~ParticleSoA() {
+      sycl::free(pos_x, _Q); pos_x = nullptr; sycl::free(pos_y, _Q); pos_y = nullptr; sycl::free(pos_z, _Q); pos_z = nullptr;
+      sycl::free(vel_x, _Q); vel_x = nullptr; sycl::free(vel_y, _Q); vel_y = nullptr; sycl::free(vel_z, _Q); vel_z = nullptr;
+      sycl::free(acc_x, _Q); acc_x = nullptr; sycl::free(acc_y, _Q); acc_y = nullptr; sycl::free(acc_z, _Q); acc_z = nullptr;
+      sycl::free(mass, _Q); mass = nullptr;
+    }
+    void init(int n, sycl::queue Q) 
     {
-      pos_x = NULL; pos_y = NULL; pos_z = NULL;
-      vel_x = NULL; vel_y = NULL; vel_z = NULL;
-      acc_x = NULL; acc_y = NULL; acc_z = NULL;
-      mass  = NULL;
+      pos_x = malloc_shared<real_type>(n, Q); pos_y = malloc_shared<real_type>(n, Q); pos_z = malloc_shared<real_type>(n, Q);
+      vel_x = malloc_shared<real_type>(n, Q); vel_y = malloc_shared<real_type>(n, Q); vel_z = malloc_shared<real_type>(n, Q);
+      acc_x = malloc_shared<real_type>(n, Q); acc_y = malloc_shared<real_type>(n, Q); acc_z = malloc_shared<real_type>(n, Q);
+      mass  = malloc_shared<real_type>(n, Q);
+      _Q = Q;
+
+      // pos_x = NULL; pos_y = NULL; pos_z = NULL;
+      // vel_x = NULL; vel_y = NULL; vel_z = NULL;
+      // acc_x = NULL; acc_y = NULL; acc_z = NULL;
+      // mass  = NULL;
     }
     real_type *pos_x, *pos_y, *pos_z;
     real_type *vel_x, *vel_y, *vel_z;
     real_type *acc_x, *acc_y, *acc_z;  
     real_type *mass;
+
+    sycl::queue _Q;
 };
 
 #endif

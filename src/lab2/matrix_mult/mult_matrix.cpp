@@ -1,6 +1,6 @@
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 
-using  namespace  cl::sycl;
+using  namespace  sycl;
 
 void matrix_mult_C(float *a, float *b, float *c, int N)
 {
