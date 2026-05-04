@@ -2,6 +2,7 @@
 
 #include "Film.h"
 #include "Renderer.h"
+#include <fstream>
 
 class SDLViewer
 {
@@ -21,6 +22,8 @@ private:
     struct SDL_Window* _window = nullptr;
     struct SDL_Renderer* _sdlRenderer = nullptr;
     struct SDL_Texture* _texture = nullptr;
+    mutable std::ofstream _metricsFile;
     bool _initialized = false;
+    bool _imguiInitialized = false;
     bool running = true;
 };

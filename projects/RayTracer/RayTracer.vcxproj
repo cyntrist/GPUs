@@ -35,12 +35,19 @@
     <ClCompile Include="src\Sphere.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\World.cpp" />
+    <ClCompile Include="src\imgui\imgui.cpp" />
+    <ClCompile Include="src\imgui\imgui_draw.cpp" />
+    <ClCompile Include="src\imgui\imgui_tables.cpp" />
+    <ClCompile Include="src\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\imgui\backends\imgui_impl_sdl3.cpp" />
+    <ClCompile Include="src\imgui\backends\imgui_impl_sdlrenderer3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Camera.hpp" />
     <ClInclude Include="src\CheckerTexture.h" />
     <ClInclude Include="src\Color.h" />
     <ClInclude Include="src\ConstantTexture.h" />
+    <ClInclude Include="src\cuda\CUDABackend.h" />
     <ClInclude Include="src\DirectionalLight.h" />
     <ClInclude Include="src\Film.h" />
     <ClInclude Include="src\Light.h" />
@@ -62,12 +69,19 @@
       <Project>{81ce8daf-ebb2-4761-8e45-b71abcca8c68}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="src\cuda\CUDABackend.cu">
+      <CompileOut Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)bin\$(Platform)\$(Configuration)\%(Filename)%(Extension).obj</CompileOut>
+      <CompileOut Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)bin\$(Platform)\$(Configuration)\%(Filename)%(Extension).obj</CompileOut>
+    </CudaCompile>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{aaf19da1-72e2-4ec7-88c1-57800060d911}</ProjectGuid>
     <RootNamespace>src</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <CudaToolkitCustomDir>$(CUDA_PATH)</CudaToolkitCustomDir>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -98,6 +112,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 13.2.props" />
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
@@ -154,12 +169,17 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)src\glm;$(ProjectDir)src;$(ProjectDir);$(ProjectDir)src\sdl\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src\imgui;$(ProjectDir)src\glm;$(ProjectDir)src;$(ProjectDir);$(ProjectDir)src\sdl\include;$(CUDA_PATH)\include;$(ProjectDir)src\cuda</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
+    <CudaCompile>
+      <AdditionalOptions>-std=c++17 --expt-relaxed-constexpr -diag-suppress=20012 -diag-suppress=20013 %(AdditionalOptions)</AdditionalOptions>
+    </CudaCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(CUDA_PATH)\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -171,14 +191,20 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)src\glm;$(ProjectDir)src;$(ProjectDir);$(ProjectDir)src\sdl\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src\imgui;$(ProjectDir)src\glm;$(ProjectDir)src;$(ProjectDir);$(ProjectDir)src\sdl\include;$(CUDA_PATH)\include;$(ProjectDir)src\cuda</AdditionalIncludeDirectories>
     </ClCompile>
+    <CudaCompile>
+      <AdditionalOptions>-std=c++17 --expt-relaxed-constexpr -diag-suppress=20012 -diag-suppress=20013 %(AdditionalOptions)</AdditionalOptions>
+    </CudaCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(CUDA_PATH)\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 13.2.targets" />
   </ImportGroup>
 </Project>

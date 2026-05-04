@@ -12,6 +12,7 @@ public:
 	void Add(std::shared_ptr<Shape> sh);
 	bool Intersect(const Ray& ray, float tMin, float tMax) const override;
 	bool Intersect(const Ray& ray, float tMin, float tMax, InfoIntersection& info) const override;
+	const std::vector<std::shared_ptr<Shape>>& GetShapes() const { return _sceneShapes; }
 
 private:
 	std::vector<std::shared_ptr<Shape>> _sceneShapes;

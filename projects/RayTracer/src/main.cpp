@@ -28,7 +28,7 @@
 int main(void)
 {
     // pelicula
-    auto film = std::make_shared<Film>(1920, 1080);
+    auto film = std::make_shared<Film>(1920 * 4, 1080 * 4);
 
     glm::vec3 position = { 0.0f, 0.0f, 3.0f };
     glm::vec3 look = { 0.0f, 0.0f, -1.0f };
@@ -96,7 +96,7 @@ int main(void)
     world->AddLight(pointLight2);
 
     // renderer
-    Renderer renderer(film, cam, world);
+    Renderer renderer(film, cam, world, true);
 
     // sdl
     SDLViewer viewer(film, &renderer);

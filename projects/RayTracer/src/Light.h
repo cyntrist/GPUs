@@ -21,6 +21,7 @@ public:
 	}
 
 	void SetGlossPower(int p) { _glossPower = p; }
+	int GetGlossPower() const { return _glossPower; }
 
 	// calcula la direccion desde position hasta la luz
 	virtual glm::vec3 ShadowDir(glm::vec3 position);

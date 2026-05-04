@@ -17,6 +17,11 @@ public:
 
     Ray GetRay(int x, int y) const;
 
+    const glm::vec3& GetPosition() const { return position; }
+    const glm::vec3& GetDeltaX() const { return delta_x; }
+    const glm::vec3& GetDeltaY() const { return delta_y; }
+    const glm::vec3& GetPositionTopLeft() const { return position_top_left; }
+
 private:
     glm::vec3 position;
     glm::vec3 delta_x;

@@ -17,6 +17,7 @@ public:
     int GetTamY() const { return _tamY; }
     float GetAspectRatio() const { return _aspectRatio; }
     const unsigned char* Data() const { return _pixels.data(); }
+    unsigned char* MutableData() { return _pixels.data(); }
     int Pitch() const { return _tamX * 4; } // numero de bytes que ocupa una fila completa de pixeles en memoria -> anchura * 4 (bytes por pixel
     // SDL_render.h:  the number of bytes in a row of pixel data, including padding*between lines.
 

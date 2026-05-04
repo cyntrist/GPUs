@@ -12,6 +12,7 @@ public:
 
 	point3 GetCenter() const { return _center; }
 	float GetRadius() const { return _radius; }
+	std::shared_ptr<Material> GetMaterial() const { return _material; }
 
 protected:
 	bool Intersect(const Ray& ray, float tMin, float tMax) const override;

@@ -12,6 +12,10 @@ public:
 
 	bool Intersect(const Ray& ray, float tMin, float tMax) const override;
 	bool Intersect(const Ray& ray, float tMin, float tMax, InfoIntersection& info) const override;
+	point3 GetQ() const { return _Q; }
+	glm::vec3 GetU() const { return _u; }
+	glm::vec3 GetV() const { return _v; }
+	std::shared_ptr<Material> GetMaterial() const { return _material; }
 protected:
 
 	virtual bool is_interior(float a, float b, InfoIntersection& info) const;

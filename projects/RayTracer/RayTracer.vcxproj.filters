@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Archivos de origen\CUDA">
+      <UniqueIdentifier>{fcc46f35-402d-4899-bcbf-34e32fed32e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\CUDA">
+      <UniqueIdentifier>{fdd3c90b-9910-41d1-96ee-0e05f5561e18}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Material.cpp">
@@ -61,6 +67,24 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="src\CheckerTexture.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui_draw.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui_tables.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui_widgets.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\backends\imgui_impl_sdl3.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\backends\imgui_impl_sdlrenderer3.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>
@@ -122,5 +146,13 @@
     <ClInclude Include="src\CheckerTexture.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="src\cuda\CUDABackend.h">
+      <Filter>Archivos de encabezado\CUDA</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="src\cuda\CUDABackend.cu">
+      <Filter>Archivos de origen\CUDA</Filter>
+    </CudaCompile>
   </ItemGroup>
 </Project>

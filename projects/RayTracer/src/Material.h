@@ -11,6 +11,8 @@ public:
 	Material(Color color, const std::shared_ptr<Texture>& texture = nullptr);
 
 	Color GetColor(InfoIntersection& ii) const;
+	Color GetBaseColor() const { return _color; }
+	std::shared_ptr<Texture> GetTexture() const { return _texture; }
 
 	float GetGlossFactor() const
 	{
